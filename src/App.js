@@ -13,18 +13,29 @@ class App extends React.Component {
         };
     }
     render() {
-        return ( <
-            div className = "app-container" >
-            <
-            SidebarComponent > < /SidebarComponent> <
-            EditorComponent > < /EditorComponent> < /
-            div >
+        return ( 
+        <div className = "app-container">
+            <SidebarComponent 
+            selectedNoteIndex={this.state.selectedNoteIndex} 
+            notes={this.state.notes}
+            deleteNote={this.deleteNote}
+            selectNote={this.selectNote}
+            newNote={this.newNote}> </SidebarComponent> 
+            {
+                this.state.selectedNote ?
+                <EditorComponent selectedNote={this.state.selectedNote}
+            selectedNoteIndex={this.selectedNoteIndex}
+            notes={this.state.notes}
+            noteUpdate={this.noteUpdate}> </EditorComponent> :
+            null
+            }
+            </div>
+
         );
     }
 
     componentDidMount = () => {
-        firebase
-            .firestore()
+        firebase.firestore()
             .collection('notes')
             .onSnapshot(serverUpdate => {
                 const notes = serverUpdate.docs.map(_doc => {
@@ -35,7 +46,10 @@ class App extends React.Component {
                 console.log(notes);
                 this.setState({ notes: notes });
             });
-
+    }
+    selectNote = (note,index) => this.setState({ selectedNoteIndex: index, selectedNote: note})
+    noteUpdate = (id, noteObj) => {
+        console.log(id,noteObj);
     }
 }
 export default App;
